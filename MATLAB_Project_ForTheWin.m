@@ -17,14 +17,23 @@ DJIAPriceData(:,'DJIAClosingPrice')
 DJIAPriceData(1,1)
 DJIAPriceData(1,2)
 
-% initiate column names
-ColNames = ('Dates' 'Closing Price')
-DJIAPriceData(1,1:2) = ColNames
-DJIAPriceDate= (DJIADates DJIAClosingPrice)
+
 
 % extract DJIA components
 WebsiteOfHistoricalComponents = 'https://en.wikipedia.org/wiki/Historical_components_of_the_Dow_Jones_Industrial_Average';
 fullList = webread(WebsiteOfHistoricalComponents)
+% obtain list of companies which are/ used to be a DJIA component
+% cleaning data
+% replace new line with white space in text documents
+str1 = regexprep(fullList,'[\n\r]+',' ')
+myRegExp = '(?<=<td>).+?(?=</td>)'; 
+filteredData = regexp(str1,myRegExp,'match')
+%transpose
+filteredData = filteredData.'
+%for loop to remove components that are not company names
+for i = 1:length(filteredData)
+    if DJIADates(i,1)
+end
 
 -----------------------------------------------------
 %Ignore
@@ -59,3 +68,20 @@ DJIAPriceData = num2mat[DJIAPriceData]
 for i = 1:length(DJIADates)
     disp(DJIADates(i,1))
 end
+
+
+% initiate column names
+ColNames = ('Dates' 'Closing Price')
+DJIAPriceData(1,1:2) = ColNames
+DJIAPriceDate= (DJIADates DJIAClosingPrice)
+
+myRegExp = '(?<=<A HREF=).+?(?=>.+?</A>)';       % fill in here your regular expression
+
+myText = ['It is <I>very</I> <B>important</B> to appreciate the <BR> role of <A HREF=www.wikipedia.org>regular expressions</A>. ' ...
+'See <I>for example</I> <A HREF=www.xkcd.com>this webpage</A> and <A HREF=www.google.com>this page in general</A>.']
+filteredData = regexp(myText,myRegExp,'match')
+
+% replace new line with white space in text documents
+str = regexprep(fullList,'\s+',' ')
+list = regexprep(fullList,'<.*?>','')
+subList = strsplit(list)
