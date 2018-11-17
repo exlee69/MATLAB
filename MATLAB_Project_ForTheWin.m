@@ -7,7 +7,6 @@ EndDate = '15042008'
 DJIAdata = hist_stock_data(StartDate,EndDate,'^DJI')
 
 
-
 % Build table data for DJIA closing price
 DJIADates = DJIAdata.Date
 DJIAClosingPrice = DJIAdata.Close
