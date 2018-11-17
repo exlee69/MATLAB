@@ -36,6 +36,11 @@ dates = regexp(str1,myregexp,'match');
 dates = regexprep(dates,'_',' ');
 %transpose
 dates = dates.'
+% Split cells by mm, dd, yyy
+datesplit = regexp(dates, '\W+', 'split')  % split into columns
+datesplit = vertcat(datesplit{:}) 
+
+
 %for loop to remove components that are not company names
 for i = 1:length(filteredData)
     if DJIADates(i,1)
