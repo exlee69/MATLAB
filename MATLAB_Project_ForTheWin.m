@@ -23,12 +23,19 @@ WebsiteOfHistoricalComponents = 'https://en.wikipedia.org/wiki/Historical_compon
 fullList = webread(WebsiteOfHistoricalComponents)
 % obtain list of companies which are/ used to be a DJIA component
 % cleaning data
+% extract DJIA historical components
 % replace new line with white space in text documents
 str1 = regexprep(fullList,'[\n\r]+',' ')
 myRegExp = '(?<=<td>).+?(?=</td>)'; 
 filteredData = regexp(str1,myRegExp,'match')
 %transpose
 filteredData = filteredData.'
+% extract dates in which DJIA historical components changes
+myregexp = '(?<="></span><span class="mw-headline" id=").+?(?=">)';
+dates = regexp(str1,myregexp,'match');
+dates = regexprep(dates,'_',' ');
+%transpose
+dates = dates.'
 %for loop to remove components that are not company names
 for i = 1:length(filteredData)
     if DJIADates(i,1)
