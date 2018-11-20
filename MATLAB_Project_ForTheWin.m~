@@ -64,7 +64,14 @@ filteredDatav2(51,:) = []
 filteredDatav2(43,:) = []
 filteredDatav2(23,:) = []
 filteredDatav2(1,:) = []
- 
+% find associated tickers with list of companies
+% get universe of companies with tickers (delete get_stock_symbols)
+NASDAQ = get_stock_symbols('Apple')
+NYSE = get_stock_symbols('NYSE')
+AMEX = get_stock_symbols('AMEX')
+% get data from http://eoddata.com/symbols.aspx
+NASDAQ
+
 
 % extract dates in which DJIA historical components changes
 myregexp = '(?<="></span><span class="mw-headline" id=").+?(?=">)';

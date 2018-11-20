@@ -64,7 +64,21 @@ filteredDatav2(51,:) = []
 filteredDatav2(43,:) = []
 filteredDatav2(23,:) = []
 filteredDatav2(1,:) = []
- 
+% convert cell array to table
+filteredDatav2 = cell2table(filteredDatav2)
+% find associated tickers with list of companies
+% get universe of companies with tickers (delete get_stock_symbols)
+NASDAQ = get_stock_symbols('Apple')
+NYSE = get_stock_symbols('NYSE')
+AMEX = get_stock_symbols('AMEX')
+% get data from http://eoddata.com/symbols.aspx
+NASDAQ = readtable('NASDAQ.txt')
+NYSE= readtable('NYSE.txt')
+AMEX = readtable('AMEX.txt')
+TickerUniverse = [NASDAQ; NYSE; AMEX]
+% remove repeated datasets
+TickerUniverse = unique(TickerUniverse)
+
 
 % extract dates in which DJIA historical components changes
 myregexp = '(?<="></span><span class="mw-headline" id=").+?(?=">)';
