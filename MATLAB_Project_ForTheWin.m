@@ -59,9 +59,11 @@ filteredDatav2 = erase(filteredDatav2,"?")
 filteredDatav2 = erase(filteredDatav2,' sup id="cite_ref-2" class="reference">&#91;2&#93;)')
 % remove repeated dataset
 filteredDatav2 = unique(filteredDatav2)
-% remove blank cell before 3M company
+% remove blank cell before 3M company and unwanted companies
+filteredDatav2(51,:) = []
+filteredDatav2(43,:) = []
+filteredDatav2(23,:) = []
 filteredDatav2(1,:) = []
-% remove
  
 
 % extract dates in which DJIA historical components changes
