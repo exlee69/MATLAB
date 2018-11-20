@@ -86,7 +86,10 @@ datesplit_day_string_standardise = pad(b,2,'left','0')
 % vectors and inserting hyphens in between the string
 combined_date = strcat(datesplit_year,"-",datesplit_month,"-",datesplit_day_string_standardise)
 % step 3: convert to date-time format
-datefmt = datetime(combined_date,'InputFormat','yyyy-MMM-dd')
+% Just to help MATLAB recognise the format in 
+datestring = datestr(combined_date,24)           
+% Convert to ddmmyyyy
+datestring = datestr(combined_date,'ddmmyyy')    
 
 
 

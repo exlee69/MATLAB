@@ -4,9 +4,6 @@ StartDate = '29011985' %yahoofinance is fixed at this date
 EndDate = '15042008'
 % Download time series of DJIA index value from YahooFinance
 DJIAdata = hist_stock_data(StartDate,EndDate,'^DJI')
-% Download times series of DJIA components from Alpha Vantage
-% Your API key is: K2RGDAOSJL3AA6O5
-MSFT = F_Alphavantage('TIME_SERIES_DAILY','symbol','MSFT','outputsize','full') 
 
 
 
@@ -21,9 +18,10 @@ DJIAPriceData(1,2)
 
 
 
-% extract DJIA components
+% extract DJIA components from 1998 onwards (due to alphavantage)
 WebsiteOfHistoricalComponents = 'https://en.wikipedia.org/wiki/Historical_components_of_the_Dow_Jones_Industrial_Average';
 fullList = webread(WebsiteOfHistoricalComponents)
+fullList = extractBefore(fullList,'<p>Chevron, Goodyear, Sears Roebuck, and Union Carbide were replaced by Home Depot, Intel, Microsoft, and SBC Communications. Travelers and Citicorp merge under the name Citigroup.')
 % obtain list of companies which are/ used to be a DJIA component
 % cleaning data
 % extract DJIA historical components
@@ -61,6 +59,9 @@ filteredDatav2 = erase(filteredDatav2,"?")
 filteredDatav2 = erase(filteredDatav2,' sup id="cite_ref-2" class="reference">&#91;2&#93;)')
 % remove repeated dataset
 filteredDatav2 = unique(filteredDatav2)
+% remove blank cell before 3M company
+filteredDatav2(1,:) = []
+% remove
  
 
 % extract dates in which DJIA historical components changes
@@ -85,10 +86,17 @@ datesplit_day_string_standardise = pad(b,2,'left','0')
 % vectors and inserting hyphens in between the string
 combined_date = strcat(datesplit_year,"-",datesplit_month,"-",datesplit_day_string_standardise)
 % step 3: convert to date-time format
-datefmt = datetime(combined_date,'InputFormat','yyyy-MMM-dd')
+datestring = datestr(combined_date,24)           % Just to help MATLAB recognise the format in 
+datestring = datestr(combined_date,'ddmmyyy')    % Convert to ddmmyyyy
 
 
 
+% Download times series of DJIA components from Alpha Vantage
+% Your API key is: K2RGDAOSJL3AA6O5
+MSFT = F_Alphavantage('TIME_SERIES_DAILY','symbol','MSFT','outputsize','full') 
+MSFTDate = MSFT.Date
+MSFTClosingPrice = MSFT.Close
+MSFTData = table(MSFTDate,MSFTClosingPrice)
 -----------------------------------------------------
 %Ignore
 % Build Data Table for DJIA closing price
