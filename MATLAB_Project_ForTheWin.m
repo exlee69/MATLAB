@@ -48,24 +48,27 @@ filteredDatav2 = regexprep(filteredDatav2,'<[sup id].+?>[\S]+</sup>','')
 % remove hyperlink from words (unable to remove hyperlink without removing
 % the words directly
 filteredDatav2 = regexprep(filteredDatav2,'<.*?>','')
-% remove unwanted symbols behind the company names
-filteredDatav2 = string(filteredDatav2)
-filteredDatav2 = pad(filteredDatav2,40,'right')
-filteredDatav2 = regexprep(filteredDatav2,'\s\W\s{5,29}','')
-filteredDatav2 = strtrim(filteredDatav2)
-filteredDatav2 = unique(filteredDatav2)
-filteredDatav2 = cellstr(filteredDatav2)
-% remove blank cell before 3M company and unwanted companies
-filteredDatav2(53,:) = []
-filteredDatav2(45,:) = []
-% Mac is an issue, 36 or 37
-filteredDatav2(36,:) = []
-filteredDatav2(28,:) = []
-filteredDatav2(24,:) = []
-filteredDatav2(1,:) = []
-% convert cell array to table
-filteredDatav3 = cell2table(filteredDatav2)
-filteredDatav3.Properties.VariableNames = {'CompanyName'}
+% remove unwanted companies who drop out from the DJIA
+filteredDatav3 = strtrim(filteredDatav2)
+filteredDatav3 = filteredDatav3(~cellfun('isempty', filteredDatav3))
+filteredDatav3 = regexprep(filteredDatav3,'\.','')
+filteredDatav4 = {}
+n = length(filteredDatav3)
+for c = 1:length(filteredDatav3)
+    testelement = char(filteredDatav3(c,1))
+    d = testelement(end)
+    filteredDatav4{end+1} = d
+end
+filteredDatav4 = filteredDatav4.'
+for c = 1:length(filteredDatav3)
+    test = sum(char(filteredDatav4(c,1)))
+    if test == 8595
+        filteredDatav3(c,1) = cellstr("")
+    end
+end
+filteredDatav3 = filteredDatav3(~cellfun('isempty', filteredDatav3))
+companies = reshape(filteredDatav3,30,[])
+companies = companies.'
 
 % find associated tickers with list of companies
 % get universe of companies with tickers (delete get_stock_symbols)
@@ -118,7 +121,12 @@ datestring = datestr(combined_date,24)
 % Convert to ddmmyyyy
 datestring = datestr(combined_date,'ddmmyyy')    
 
+% Compile dates and companies into one sheet
+compiled = cellstr(datestring)
+compiled(:,2:31) = companies(:,:)
 
+
+% brian add your part here
 
 % Download times series of DJIA components from Alpha Vantage
 % Your API key is: K2RGDAOSJL3AA6O5
@@ -181,6 +189,7 @@ subList = strsplit(list)
 for i = 1:length(filteredData)
     if DJIADates(i,1)
     end
+end
 % remove specific unwanted substring from string cell
 filteredDatav2 = erase(filteredDatav2,' sup id="cite_ref-2" class="reference">&#91;2&#93;)')
 % add space after CAPS letter
@@ -199,3 +208,47 @@ filteredDatav2 = erase(filteredDatav2,"?")
 
 % export data to excel
 writetable(TickerUniverse, "TickerUniverse.xlsx")
+
+filteredDatav3 = filteredDatav3(~cellfun('isempty', filteredDatav3))
+    
+    end   
+    filteredDatav5{end+1} = d 
+    filteredDatav5{end+1} = filteredDatav3(c,1) 
+
+filteredDatav5 = string(filteredData
+
+
+
+
+is_special = false(size(filteredDatav2))
+is_special( regexp( filteredDatav2, '[^a-zA-Z0-9.&]' ) ) = true
+TF = contains(filteredDatav2,'[^a-zA-Z0-9&]')
+
+lastletter = filteredDatav2(end)
+
+
+
+
+
+filteredDatav2 = unique(filteredDatav2)
+
+filteredDatav2 = regexprep(filteredDatav2,'.*?(?=\W)','')
+
+
+
+filteredDatav2 = pad(filteredDatav2,40,'right')
+filteredDatav2 = regexprep(filteredDatav2,'\s\W\s{5,29}','')
+filteredDatav2 = strtrim(filteredDatav2)
+filteredDatav2 = unique(filteredDatav2)
+filteredDatav2 = cellstr(filteredDatav2)
+% remove blank cell before 3M company and unwanted companies
+filteredDatav2(53,:) = []
+filteredDatav2(45,:) = []
+% Mac is an issue, 36 or 37
+filteredDatav2(36,:) = []
+filteredDatav2(28,:) = []
+filteredDatav2(24,:) = []
+filteredDatav2(1,:) = []
+% convert cell array to table
+filteredDatav3 = cell2table(filteredDatav2)
+filteredDatav3.Properties.VariableNames = {'CompanyName'}
