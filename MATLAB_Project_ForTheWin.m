@@ -110,6 +110,26 @@ compiled(:,2:31) = companies(:,:)
 
 
 % brian add your part here
+compiledv2 = regexprep(compiled,'Alcoa Inc','Alcoa Corp')
+compiledv2 = regexprep(compiledv2,'American International Group Inc','American International Group')
+compiledv2 = regexprep(compiledv2,'Cisco Systems,','Cisco Systems Corp')
+compiledv2 = regexprep(compiledv2,'Eastman Kodak Company','Eastman Kodak')
+compiledv2 = regexprep(compiledv2,'General Motors Corporation','General Motors Cl B')
+compiledv2 = regexprep(compiledv2,'Intel Corporation','Intel Corp')
+compiledv2 = regexprep(compiledv2,'International Business Machines Corporation','International Business Machines')
+compiledv2 = regexprep(compiledv2,'Kraft Foods Inc','Kraft Heinz Co')
+compiledv2 = regexprep(compiledv2,'Corporation','Corp')
+compiledv2 = regexprep(compiledv2,'(\w\s)* & Co, Inc',' & Company')
+compiledv2 = regexprep(compiledv2,'Morris Companies','Morris International')
+compiledv2 = regexprep(compiledv2,'The Boeing','Boeing')
+compiledv2 = regexprep(compiledv2,'The Coca','Coca')
+compiledv2 = regexprep(compiledv2,'The Goldman Sachs Group, Inc','Goldman Sachs Group')
+compiledv2 = regexprep(compiledv2,'The Home Depot, Inc','Home Depot')
+compiledv2 = regexprep(compiledv2,'The Procter','Procter')
+compiledv2 = regexprep(compiledv2,'The Travelers Companies, Inc.','The Travelers Companies Inc')
+compiledv2 = regexprep(compiledv2,'The Walt','Walt')
+compiledv2 = regexprep(compiledv2,'Wal-Mart Stores, Inc.','Wal-Mart Stores')
+compiledv2 = regexprep(compiledv2,'Walgreens Boots Alliance, Inc.','Walgreens Boots Alliance')
 
 % Download times series of DJIA components from Alpha Vantage
 % Your API key is: K2RGDAOSJL3AA6O5
