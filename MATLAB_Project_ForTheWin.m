@@ -69,30 +69,12 @@ end
 filteredDatav3 = filteredDatav3(~cellfun('isempty', filteredDatav3))
 companies = reshape(filteredDatav3,30,[])
 companies = companies.'
+% remove unwanted symbols
+companies = pad(companies,40,'right')
+companies = regexprep(companies,'\s\W\s{5,29}','')
+companies = strtrim(companies)
 
-% find associated tickers with list of companies
-% get universe of companies with tickers (delete get_stock_symbols)
-NASDAQ = get_stock_symbols('NASDAQ')
-NYSE = get_stock_symbols('NYSE')
-AMEX = get_stock_symbols('AMEX')
-% get data from http://eoddata.com/symbols.aspx
-NASDAQ = readtable('NASDAQ.txt')
-NYSE= readtable('NYSE.txt')
-TickerUniverse = [NASDAQ; NYSE]
-% remove repeated datasets
-TickerUniverse = unique(TickerUniverse)
-TickerUniverse2 = table2cell(TickerUniverse)
-% for loop to append tickers into filteredDatav2 (STILL DOING)
-for c = 1:length(filteredDatav2)
-    if ~any(strcmp(TickerUniverse2(:,1),char(filteredDatav2(c,1))))
-        % works only if filteredDatav2 is cell array
-        Index = TickerUniverse(string(TickerUniverse.Description)== char(filteredDatav2(c,1)), :)
-        % works
-        filteredDatav3(c,2) = Index(1,1)
-    end
-end
-% rename column name of filteredDatav3 to tickers
-filteredDatav3.Properties.VariableNames = {'CompanyName' 'Ticker'}
+
 
 % extract dates in which DJIA historical components changes
 myregexp = '(?<="></span><span class="mw-headline" id=").+?(?=">)';
@@ -134,6 +116,34 @@ MSFT = F_Alphavantage('TIME_SERIES_DAILY','symbol','MSFT','outputsize','full')
 MSFTDate = MSFT.Date
 MSFTClosingPrice = MSFT.Close
 MSFTData = table(MSFTDate,MSFTClosingPrice)
+
+-------------------------------------------
+% WIP
+% find associated tickers with list of companies
+% get universe of companies with tickers (delete get_stock_symbols)
+NASDAQ = get_stock_symbols('NASDAQ')
+NYSE = get_stock_symbols('NYSE')
+AMEX = get_stock_symbols('AMEX')
+% get data from http://eoddata.com/symbols.aspx
+NASDAQ = readtable('NASDAQ.txt')
+NYSE= readtable('NYSE.txt')
+TickerUniverse = [NASDAQ; NYSE]
+% remove repeated datasets
+TickerUniverse = unique(TickerUniverse)
+TickerUniverse2 = table2cell(TickerUniverse)
+% for loop to append tickers into filteredDatav2 (STILL DOING)
+for c = 1:length(filteredDatav2)
+    if ~any(strcmp(TickerUniverse2(:,1),char(filteredDatav2(c,1))))
+        % works only if filteredDatav2 is cell array
+        Index = TickerUniverse(string(TickerUniverse.Description)== char(filteredDatav2(c,1)), :)
+        % works
+        filteredDatav3(c,2) = Index(1,1)
+    end
+end
+% rename column name of filteredDatav3 to tickers
+filteredDatav3.Properties.VariableNames = {'CompanyName' 'Ticker'}
+
+
 -----------------------------------------------------
 %Ignore
 % Build Data Table for DJIA closing price
@@ -252,3 +262,5 @@ filteredDatav2(1,:) = []
 % convert cell array to table
 filteredDatav3 = cell2table(filteredDatav2)
 filteredDatav3.Properties.VariableNames = {'CompanyName'}
+
+
