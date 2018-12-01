@@ -94,7 +94,7 @@ datesplit_year = datesplit(:,3);
 % convert date_split to string
 datesplit_day_string = string(datesplit_day);
 % standardise datesplit_day_string to all 2 digits
-datesplit_day_string_standardise = pad(b,2,'left','0');
+datesplit_day_string_standardise = pad(datesplit_day,2,'left','0');
 % step 2: rearrange the column vector by combining the 3 separate column
 % vectors and inserting hyphens in between the string
 combined_date = strcat(datesplit_year,"-",datesplit_month,"-",datesplit_day_string_standardise);
@@ -102,7 +102,7 @@ combined_date = strcat(datesplit_year,"-",datesplit_month,"-",datesplit_day_stri
 % Just to help MATLAB recognise the format in 
 datestring = datestr(combined_date,24);           
 % Convert to ddmmyyyy
-datestring = datestr(combined_date,'ddmmyyy');    
+datestring = datestr(combined_date,'ddmmyyyy');    
 
 % Compile dates and companies into one sheet
 compiled = cellstr(datestring);
