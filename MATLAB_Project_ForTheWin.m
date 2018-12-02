@@ -165,7 +165,7 @@ end
 
 % relevant data inputs for the model
 StartDate = '29011985'; %yahoofinance is fixed at this date
-EndDate = datestr(now,'ddmmyyyy')
+EndDate = datestr(now,'ddmmyyyy');
 
 % Download time series of DJIA index value from YahooFinance
 DJIAdata = hist_stock_data(StartDate,EndDate,'^DJI');
