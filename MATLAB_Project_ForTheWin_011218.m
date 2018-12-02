@@ -1,4 +1,24 @@
 
+% relevant data inputs for the model
+StartDate = '29011985'; %yahoofinance is fixed at this date
+EndDate = '15042008';
+% Download time series of DJIA index value from YahooFinance
+DJIAdata = hist_stock_data(StartDate,EndDate,'^DJI');
+
+
+
+% Build table data for DJIA closing price
+DJIADates = DJIAdata.Date;
+DJIAClosingPrice = DJIAdata.Close;
+DJIAPriceData = table(DJIADates,DJIAClosingPrice);
+DJIAPriceData(:,'DJIADates'); 
+DJIAPriceData(:,'DJIAClosingPrice'); 
+% for checking purpose
+DJIAPriceData(1,1);
+DJIAPriceData(1,2);
+
+
+
 % extract DJIA components from 1998 onwards (due to alphavantage)
 WebsiteOfHistoricalComponents = 'https://en.wikipedia.org/wiki/Historical_components_of_the_Dow_Jones_Industrial_Average';
 fullList = webread(WebsiteOfHistoricalComponents);
@@ -40,7 +60,7 @@ for c = 1:length(filteredDatav3)
     d = testelement(end);
     filteredDatav4{end+1} = d;
 end
-filteredDatav4 = filteredDatav4.';
+filteredDatav4 = filteredDatav4.'
 for c = 1:length(filteredDatav3)
     test = sum(char(filteredDatav4(c,1)));
     if test == 8595
@@ -77,158 +97,52 @@ day = string(day);
 day_standardise = pad(day,2,'left','0');
 % step 2: rearrange the column vector by combining the 3 separate column
 % vectors and inserting hyphens in between the string
-combined_date = strcat(day_standardise,"-",month,"-",year);
+combined_date = strcat(day_standardise,"-",month,"-",year)
 % step 3: convert to date-time format
 % Just to help MATLAB recognise the datetime format
-datestring = datestr(combined_date,24) ;          
+datestring = datestr(combined_date,24)           
 % Convert to ddmmyyyy
-datestring = datestr(combined_date,'ddmmyyyy') ;
-
-
+datestring = datestr(combined_date,'ddmmyyyy') 
 
 % Compile dates and companies into one sheet
 compiled = cellstr(datestring);
-compiled(:,2:31) = companies(:,:);
+compiled(:,2:31) = companies(:,:)
 
 
+% brian add your part here
 
-% find associated tickers with list of companies
-% get universe of companies with tickers (get data from
-% http://eoddata.com/symbols.aspx)
-NASDAQ = readtable('NASDAQ.txt');
-NYSE= readtable('NYSE.txt');
-TickerUniverse = [NASDAQ; NYSE];
-% remove repeated datasets
-TickerUniverse = unique(TickerUniverse);
-TickerUniverse2 = table2cell(TickerUniverse);
-% remove unnecessary data (JP Morgan)
-TickerUniverse2(3305,:)=[];
-TickerUniverse2(3298,:)=[];
-TickerUniverse2(198,:)=[];
-
-
-% standardise company names to TickerUniverse
-compiledv2 = regexprep(compiled,'Corporation','Corp');
-compiledv2 = regexprep(compiledv2,'(\w\s)* & Co, Inc',' & Company');
-compiledv2 = regexprep(compiledv2,'Alcoa Inc','Alcoa Corp');
-compiledv2 = regexprep(compiledv2,'AlliedSignal Incorporated','Honeywell International Inc');
-compiledv2 = regexprep(compiledv2,'Altria Group Incorporated','Altria Group');
-compiledv2 = regexprep(compiledv2,'Altria Group, Incorporated','Altria Group');
-compiledv2 = regexprep(compiledv2,'American International Group Inc','American International Group');
-compiledv2 = regexprep(compiledv2,'AT&T Corp','AT&T Inc');
-compiledv2 = regexprep(compiledv2,'Cisco Systems, Inc','Cisco Systems Inc');
-compiledv2 = regexprep(compiledv2,'DowDuPont Inc','Dowdupont Inc');
-compiledv2 = regexprep(compiledv2,'Eastman Kodak Company','Eastman Kodak');
-compiledv2 = regexprep(compiledv2,'EI du Pont de Nemours & Company','Dowdupont Inc');
-compiledv2 = regexprep(compiledv2,'Exxon Corp','Exxon Mobil Corp');
-compiledv2 = regexprep(compiledv2,'General Motors Corp','General Motors Company');
-compiledv2 = regexprep(compiledv2,'Honeywell International','Honeywell International Inc');
-compiledv2 = regexprep(compiledv2,'Honeywell International Inc Inc','Honeywell International Inc');
-compiledv2 = regexprep(compiledv2,'Intel Corporation','Intel Corp');
-compiledv2 = regexprep(compiledv2,'International Business Machines Corp','International Business Machines');
-compiledv2 = regexprep(compiledv2,'Kraft Foods Inc','Kraft Heinz Co');
-compiledv2 = regexprep(compiledv2,'McDonald?s Corp',"McDonald's Corp");
-compiledv2 = regexprep(compiledv2,'Minnesota Mining & Manufacturing Company','3M Company');
-compiledv2 = regexprep(compiledv2,'Morris Companies','Morris International');
-compiledv2 = regexprep(compiledv2,'Nike, Inc','Nike Inc');
-compiledv2 = regexprep(compiledv2,'JP Morgan & Company','JP Morgan Chase & Co');
-compiledv2 = regexprep(compiledv2,'JPMorgan Chase & Co','JP Morgan Chase & Co');
-compiledv2 = regexprep(compiledv2,'SBC Communications Inc','AT&T Inc');
-compiledv2 = regexprep(compiledv2,'The Boeing','Boeing');
-compiledv2 = regexprep(compiledv2,'The Coca','Coca');
-compiledv2 = regexprep(compiledv2,'The Goldman Sachs Group, Inc','Goldman Sachs Group');
-compiledv2 = regexprep(compiledv2,'The Home Depot, Inc','Home Depot');
-compiledv2 = regexprep(compiledv2,'The Procter','Procter');
-compiledv2 = regexprep(compiledv2,'The Travelers Companies, Inc','The Travelers Companies Inc');
-compiledv2 = regexprep(compiledv2,'The Walt','Walt');
-compiledv2 = regexprep(compiledv2,'UnitedHealth Group Inc','Unitedhealth Group Inc');
-compiledv2 = regexprep(compiledv2,'Verizon Communications, Inc','Verizon Communications Inc');
-compiledv2 = regexprep(compiledv2,'Wal-Mart Stores, Inc','Wal-Mart Stores');
-compiledv2 = regexprep(compiledv2,'Walmart Inc','Wal-Mart Stores');
-compiledv2 = regexprep(compiledv2,'Walgreens Boots Alliance, Inc','Walgreens Boots Alliance');
-
-% convert companies in compiledv2 dataset to its tickers
-m = size(compiledv2);
-n = length(compiledv2);
-o = m(1,1);
-compiledv3 = compiledv2;
-for c = 1:o
-    for b = 2:n
-        a = find(strcmp(TickerUniverse2(:,2), compiledv2(c,b)));
-        compiledv3(c,b) = TickerUniverse2(a,1);
-    end
-end
-
-
-
-
-
-% relevant data inputs for the model
-StartDate = '29011985'; %yahoofinance is fixed at this date
-EndDate = datestr(now,'ddmmyyyy')
-
-% Download time series of DJIA index value from YahooFinance
-DJIAdata = hist_stock_data(StartDate,EndDate,'^DJI');
-% Download time series of relevant companies from YahooFinance
-companies2 = compiledv3(:,2:length(compiledv3))
-companies2 = unique(reshape(companies2,[],1));
-CompanyData = zeros(height(table(DJIAdata.Date)),length(companies2))
-length(companies2)
-for c= 10:14
-    CompanyNameStr = char(companies2(c,1));
-    CompanyDataExtract = hist_stock_data(StartDate,EndDate,CompanyNameStr);
-    CompanyClosingPrice = CompanyDataExtract.Close;
-    CompanyData(:,c) = CompanyClosingPrice;
-end
-
+% Download times series of DJIA components from Alpha Vantage
+% Your API key is: K2RGDAOSJL3AA6O5
+MSFT = F_Alphavantage('TIME_SERIES_DAILY','symbol','AA','outputsize','full') 
+MSFTDate = MSFT.Date
+MSFTClosingPrice = MSFT.Close
+MSFTData = table(MSFTDate,MSFTClosingPrice)
 
 -------------------------------------------
 % WIP
-
-CompanyData = cell2table(CompanyData)
-RelevantDate = table(DJIAdata.Date)
-COMPILE = [RelevantDate,CompanyData]
-% Download times series of DJIA components from Alpha Vantage
-% Your API key is: K2RGDAOSJL3AA6O5
-
-CompanyDate = table(CompanyDataExtract.Date)
-CompanyData(:,1) = CompanyDate
-
-
-% Build table data for DJIA closing price
-DJIADates = DJIAdata.Date;
-DJIAClosingPrice = DJIAdata.Close;
-DJIAPriceData = table(DJIADates,DJIAClosingPrice);
-DJIAPriceData(:,'DJIADates'); 
-DJIAPriceData(:,'DJIAClosingPrice'); 
-% for checking purpose
-DJIAPriceData(1,1);
-DJIAPriceData(1,2); 
-
-
-companies2 = compiledv3(:,2:length(compiledv3))
-companies2 = unique(reshape(companies2,[],1));
-% Initialise array
-Date = F_Alphavantage('TIME_SERIES_DAILY','symbol','AAPL','outputsize','full'); 
-Date = Date.Date
-CompanyData = zeros(length(Date),length(companies2))
-length(companies2)
-for c= 1:1
-    CompanyNameStr = char(companies2(c,1));
-    CompanyDataExtract = F_Alphavantage('TIME_SERIES_DAILY','symbol',CompanyNameStr,'outputsize','full'); 
-    CompanyClosingPrice = table2array(table(CompanyDataExtract.Close));
-    CompanyData(:,c) = CompanyClosingPrice;
+% find associated tickers with list of companies
+% get universe of companies with tickers (delete get_stock_symbols)
+NASDAQ = get_stock_symbols('NASDAQ')
+NYSE = get_stock_symbols('NYSE')
+AMEX = get_stock_symbols('AMEX')
+% get data from http://eoddata.com/symbols.aspx
+NASDAQ = readtable('NASDAQ.txt')
+NYSE= readtable('NYSE.txt')
+TickerUniverse = [NASDAQ; NYSE]
+% remove repeated datasets
+TickerUniverse = unique(TickerUniverse)
+TickerUniverse2 = table2cell(TickerUniverse)
+% for loop to append tickers into filteredDatav2 (STILL DOING)
+for c = 1:length(filteredDatav2)
+    if ~any(strcmp(TickerUniverse2(:,1),char(filteredDatav2(c,1))))
+        % works only if filteredDatav2 is cell array
+        Index = TickerUniverse(string(TickerUniverse.Description)== char(filteredDatav2(c,1)), :)
+        % works
+        filteredDatav3(c,2) = Index(1,1)
+    end
 end
-CompanyDate = table(CompanyDataExtract.Date)
-CompanyData(:,1) = CompanyDate
-
-
-
-MSFT = F_Alphavantage('TIME_SERIES_DAILY','symbol','MSFT','outputsize','full') 
-MSFTDate = MSFT.Date
-MSFTClosingPrice = MSFT.Close
-MSFTData = table(MSFTDate,MSFTClosingPrice);
-
+% rename column name of filteredDatav3 to tickers
+filteredDatav3.Properties.VariableNames = {'CompanyName' 'Ticker'}
 
 
 -----------------------------------------------------
@@ -308,6 +222,7 @@ writetable(TickerUniverse, "TickerUniverse.xlsx")
 
 filteredDatav3 = filteredDatav3(~cellfun('isempty', filteredDatav3))
     
+    end   
     filteredDatav5{end+1} = d 
     filteredDatav5{end+1} = filteredDatav3(c,1) 
 
@@ -348,30 +263,5 @@ filteredDatav2(1,:) = []
 % convert cell array to table
 filteredDatav3 = cell2table(filteredDatav2)
 filteredDatav3.Properties.VariableNames = {'CompanyName'}
-
-% find associated tickers with list of companies
-% get universe of companies with tickers (delete get_stock_symbols)
-NASDAQ = get_stock_symbols('NASDAQ')
-NYSE = get_stock_symbols('NYSE')
-AMEX = get_stock_symbols('AMEX')
-% get data from http://eoddata.com/symbols.aspx
-NASDAQ = readtable('NASDAQ.txt')
-NYSE= readtable('NYSE.txt')
-TickerUniverse = [NASDAQ; NYSE]
-% remove repeated datasets
-TickerUniverse = unique(TickerUniverse)
-TickerUniverse2 = table2cell(TickerUniverse)
-% for loop to append tickers into filteredDatav2 (STILL DOING)
-for c = 1:length(filteredDatav2)
-    if ~any(strcmp(TickerUniverse2(:,1),char(filteredDatav2(c,1))))
-        % works only if filteredDatav2 is cell array
-        Index = TickerUniverse(string(TickerUniverse.Description)== char(filteredDatav2(c,1)), :)
-        % works
-        filteredDatav3(c,2) = Index(1,1)
-    end
-end
-% rename column name of filteredDatav3 to tickers
-filteredDatav3.Properties.VariableNames = {'CompanyName' 'Ticker'}
-
 
 
