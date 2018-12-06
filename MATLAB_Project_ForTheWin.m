@@ -2,7 +2,7 @@
 % extract DJIA components from 1998 onwards (due to alphavantage)
 WebsiteOfHistoricalComponents = 'https://en.wikipedia.org/wiki/Historical_components_of_the_Dow_Jones_Industrial_Average';
 fullList = webread(WebsiteOfHistoricalComponents);
-fullList = extractBefore(fullList,'<p>Chevron, Goodyear, Sears Roebuck, and Union Carbide were replaced by Home Depot, Intel, Microsoft, and SBC Communications. Travelers and Citicorp merge under the name Citigroup.');
+fullList = extractBefore(fullList,'<p>AT&amp;T, Eastman Kodak, and International Paper were replaced by American International, Pfizer, and Verizon.');
 % obtain list of companies which are/ used to be a DJIA component
 % cleaning data
 % extract DJIA historical components
@@ -12,14 +12,8 @@ myRegExp = '(?<=<td>).+?(?=</td>)';
 filteredData = regexp(str1,myRegExp,'match');
 filteredData = filteredData.';
 % remove those elements not related to companies
-% remove (Preferred)
-filteredDatav2 = regexprep(filteredData,'(\S)Preferred(\S)','');
-% remove (First Preferred)
-filteredDatav2 = regexprep(filteredDatav2,'(\S)First Preferred(\S)','');
-% remove (B shares)
-filteredDatav2 = regexprep(filteredDatav2,'(\S)B shares[\s\w]*(\S)','');
 %remove amp;
-filteredDatav2 = regexprep(filteredDatav2,'amp;','');
+filteredDatav2 = regexprep(filteredData,'amp;','');
 %remove ?, ?,  ?
 filteredDatav2 = regexprep(filteredDatav2,'[???]','');
 %remove <br/>[\s\w./=]</span>
@@ -34,7 +28,6 @@ filteredDatav3 = strtrim(filteredDatav2);
 filteredDatav3 = filteredDatav3(~cellfun('isempty', filteredDatav3));
 filteredDatav3 = regexprep(filteredDatav3,'\.','');
 filteredDatav4 = {};
-n = length(filteredDatav3)
 for c = 1:length(filteredDatav3)
     testelement = char(filteredDatav3(c,1));
     d = testelement(end);
@@ -80,15 +73,27 @@ day_standardise = pad(day,2,'left','0');
 combined_date = strcat(day_standardise,"-",month,"-",year);
 % step 3: convert to date-time format
 % Just to help MATLAB recognise the datetime format
-datestring = datestr(combined_date,24) ;          
+datestring = datestr(combined_date,24)           
 % Convert to ddmmyyyy
-datestring = datestr(combined_date,'ddmmyyyy') ;
+datestring = datestr(combined_date,'ddmmyyyy')
 
-
+% Get date of day before
+date_prev = datetime(combined_date)
+date_prev = dateshift(date_prev,'start','day','previous')
+date_prev = datestr(date_prev,'ddmmyyyy')
+date_prev = cellstr(date_prev)
+today = datetime('today')
+today = datestr(today,'ddmmyyyy')
 
 % Compile dates and companies into one sheet
 compiled = cellstr(datestring);
-compiled(:,2:31) = companies(:,:);
+compiled(2:12,2) = cellstr(date_prev)
+compiled{12,2} = []
+compiled{1,2} = today
+emptycells = cellfun(@isempty, compiled);       %find empty cells in the whole cell array
+compiled(any(emptycells(:, [1 2]), 2), :) = []  %remove rows for which any of column 1 or 2 is empty
+compiled(:,3:32) = companies(:,:)
+compiled = flipud(compiled)                     %reverse dates from earliest to latest
 
 
 
@@ -127,11 +132,7 @@ compiledv2 = regexprep(compiledv2,'Honeywell International Inc Inc','Honeywell I
 compiledv2 = regexprep(compiledv2,'Intel Corporation','Intel Corp');
 compiledv2 = regexprep(compiledv2,'International Business Machines Corp','International Business Machines');
 compiledv2 = regexprep(compiledv2,'Kraft Foods Inc','Kraft Heinz Co');
-compiledv2 = regexprep(compiledv2,'McDonald?s Corp',"McDonald's Corp");
-compiledv2 = regexprep(compiledv2,'Minnesota Mining & Manufacturing Company','3M Company');
-compiledv2 = regexprep(compiledv2,'Morris Companies','Morris International');
 compiledv2 = regexprep(compiledv2,'Nike, Inc','Nike Inc');
-compiledv2 = regexprep(compiledv2,'JP Morgan & Company','JP Morgan Chase & Co');
 compiledv2 = regexprep(compiledv2,'JPMorgan Chase & Co','JP Morgan Chase & Co');
 compiledv2 = regexprep(compiledv2,'SBC Communications Inc','AT&T Inc');
 compiledv2 = regexprep(compiledv2,'The Boeing','Boeing');
@@ -146,6 +147,9 @@ compiledv2 = regexprep(compiledv2,'Verizon Communications, Inc','Verizon Communi
 compiledv2 = regexprep(compiledv2,'Wal-Mart Stores, Inc','Wal-Mart Stores');
 compiledv2 = regexprep(compiledv2,'Walmart Inc','Wal-Mart Stores');
 compiledv2 = regexprep(compiledv2,'Walgreens Boots Alliance, Inc','Walgreens Boots Alliance');
+% MacDonalds
+compiledv2(1,5) = compiledv2(5,5);
+compiledv2(2:4,8) = compiledv2(5,5);
 
 % convert companies in compiledv2 dataset to its tickers
 m = size(compiledv2);
@@ -153,33 +157,76 @@ n = length(compiledv2);
 o = m(1,1);
 compiledv3 = compiledv2;
 for c = 1:o
-    for b = 2:n
+    for b = 3:n
         a = find(strcmp(TickerUniverse2(:,2), compiledv2(c,b)));
         compiledv3(c,b) = TickerUniverse2(a,1);
     end
 end
 
 
-
-
-
 % relevant data inputs for the model
-StartDate = '29011985'; %yahoofinance is fixed at this date
+StartDate = '08042004'; %yahoofinance is fixed at this date
 EndDate = datestr(now,'ddmmyyyy');
 
 % Download time series of DJIA index value from YahooFinance
 DJIAdata = hist_stock_data(StartDate,EndDate,'^DJI');
+RelevantDates = DJIAdata.Date;
+DJIAClosingPrice = DJIAdata.Close;
 % Download time series of relevant companies from YahooFinance
-companies2 = compiledv3(:,2:length(compiledv3))
-companies2 = unique(reshape(companies2,[],1));
-CompanyData = zeros(height(table(DJIAdata.Date)),length(companies2))
-length(companies2)
-for c= 10:14
-    CompanyNameStr = char(companies2(c,1));
-    CompanyDataExtract = hist_stock_data(StartDate,EndDate,CompanyNameStr);
-    CompanyClosingPrice = CompanyDataExtract.Close;
-    CompanyData(:,c) = CompanyClosingPrice;
+SizeOfCompiledData = size(compiledv3);
+n = SizeOfCompiledData(1,1);
+m = SizeOfCompiledData(1,2);
+CompanyData = zeros(1,31);
+
+for c= 1:n
+    StartDateCompany = char(compiledv3(c,1));
+    EndDateCompany = char(compiledv3(c,2));
+    GetDates = hist_stock_data(StartDateCompany,EndDateCompany,'^DJI');
+    MiniRelevantDates = GetDates.Date;
+    MiniRelevantDates = length(MiniRelevantDates);
+    MiniCompanyData = zeros(MiniRelevantDates,1);
+    for d = 3:m
+        CompanyNameStr = char(compiledv3(c,d));
+        CompanyDataExtract = hist_stock_data(StartDateCompany,EndDateCompany,CompanyNameStr);
+        if isempty(CompanyDataExtract)
+            CompanyClosingPrice = zeros(MiniRelevantDates,1);
+            MiniCompanyData = [MiniCompanyData CompanyClosingPrice];
+        else
+            CompanyClosingPrice = CompanyDataExtract.Close;
+            MiniCompanyData = [MiniCompanyData CompanyClosingPrice];
+        end
+    end
+    CompanyData = [CompanyData; MiniCompanyData];
 end
+CompanyData(:,1) = []
+CompanyData(1,:) = []
+
+% check
+g = (0)
+for c= 1:11
+    StartDateCompany = char(compiledv3(c,1));
+    EndDateCompany = char(compiledv3(c,2));
+    GetDates = hist_stock_data(StartDateCompany,EndDateCompany,'^DJI');
+    MiniRelevantDates = GetDates.Date;
+    MiniRelevantDates = length(MiniRelevantDates)
+    g(end+1) = MiniRelevantDates;
+end
+
+h = [0]
+for c= 1:11
+    StartDateCompany = char(compiledv3(c,1));
+    EndDateCompany = char(compiledv3(c,2));
+    GetDates = hist_stock_data(StartDateCompany,EndDateCompany,'^DJI');
+    MiniRelevantDates = GetDates.Date;
+    h = [h;MiniRelevantDates];
+end
+A = {"0";"0";"0"}
+h = [h;A]
+h1 = [h,RelevantDates] 
+h1 = array2table(h1)
+xlswrite("Check.xls",h1,'A1')
+writetable(h1,"Check.xls",'Sheet',1,'Range','A1')
+
 
 
 -------------------------------------------
@@ -372,6 +419,18 @@ for c = 1:length(filteredDatav2)
 end
 % rename column name of filteredDatav3 to tickers
 filteredDatav3.Properties.VariableNames = {'CompanyName' 'Ticker'}
+
+% Download time series of relevant companies from YahooFinance
+companies2 = compiledv3(:,2:length(compiledv3))
+companies2 = unique(reshape(companies2,[],1));
+CompanyData = zeros(height(table(DJIAdata.Date)),length(companies2))
+length(companies2)
+for c= 10:14
+    CompanyNameStr = char(companies2(c,1));
+    CompanyDataExtract = hist_stock_data(StartDate,EndDate,CompanyNameStr);
+    CompanyClosingPrice = CompanyDataExtract.Close;
+    CompanyData(:,c) = CompanyClosingPrice;
+end
 
 
 
