@@ -201,16 +201,14 @@ end
 CompanyData(:,1) = []
 CompanyData(1,:) = []
 
-% test WIP
-% compute sum of companies, and include the Dates, DJIAClosingPrice into
-% one big mega dataset
-MegaDataSet = array2table(CompanyData)
+% test
+% compute sum of companies
+g = array2table(CompanyData)
 RelevantDates = table(RelevantDates)
-DJIAClosingPrice = table(DJIAClosingPrice)
-SumOfCompanyPrices = sum(CompanyData,2)
+SumOfCompanyPrices = sum(CompanyData(:,2:end),2)
 SumOfCompanyPrices = array2table(SumOfCompanyPrices)
-MegaDataSet = [RelevantDates,MegaDataSet,SumOfCompanyPrices,DJIAClosingPrice]
-writetable(MegaDataSet,"Check2.xls",'Sheet',1,'Range','A1')
+g = [RelevantDates,g,SumOfCompanyPrices]
+writetable(g,"Check2.xls",'Sheet',1,'Range','A1')
 
 
 % check
