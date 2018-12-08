@@ -201,18 +201,6 @@ end
 CompanyData(:,1) = []
 CompanyData(1,:) = []
 
-% test WIP
-% compute sum of companies, and include the Dates, DJIAClosingPrice into
-% one big mega dataset
-MegaDataSet = array2table(CompanyData)
-RelevantDates = table(RelevantDates)
-DJIAClosingPrice = table(DJIAClosingPrice)
-SumOfCompanyPrices = sum(CompanyData,2)
-SumOfCompanyPrices = array2table(SumOfCompanyPrices)
-MegaDataSet = [RelevantDates,MegaDataSet,SumOfCompanyPrices,DJIAClosingPrice]
-writetable(MegaDataSet,"Check2.xls",'Sheet',1,'Range','A1')
-
-
 % check
 h = [0]
 for c= 1:11
@@ -227,6 +215,30 @@ h1 = [h,RelevantDates]
 h1 = array2table(h1)
 xlswrite("Check1.xls",h1,'A1')
 writetable(h1,"Check1.xls",'Sheet',1,'Range','A1')
+
+
+% test WIP
+% compute sum of companies, and include the Dates, DJIAClosingPrice into
+% one big mega dataset
+MegaDataSet = array2table(CompanyData)
+RelevantDates = table(RelevantDates)
+DJIAClosingPrice = table(DJIAClosingPrice)
+SumOfCompanyPrices = sum(CompanyData,2)
+SumOfCompanyPrices = array2table(SumOfCompanyPrices)
+MegaDataSet = [RelevantDates,MegaDataSet,SumOfCompanyPrices,DJIAClosingPrice]
+MegaDataSet.SpecialDivider = (MegaDataSet.SumOfCompanyPrices)./(MegaDataSet.DJIAClosingPrice)
+% check
+writetable(MegaDataSet,"Check2.xls",'Sheet',1,'Range','A1')
+
+
+% plot time series divider WIP
+TimeSeriesDivider = plot(MegaDataSet.RelevantDates,MegaDataSet.SpecialDivider,'LineWidth',0.4,'Color',[0 0.5 0.5])
+datetick('x','yyyy')
+axis([MegaDataSet(1,1) MegaDataSet(end,1) 0 max(MegaDataset(:,end)])
+title('Time Series Divider')
+
+
+
 
 
 
