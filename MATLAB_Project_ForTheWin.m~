@@ -231,8 +231,8 @@ MegaDataSet.SpecialDivider = (MegaDataSet.SumOfCompanyPrices)./(MegaDataSet.DJIA
 writetable(MegaDataSet,"Check2.xls",'Sheet',1,'Range','A1')
 
 
-% plot time series divider
-TimeSeriesDivider = plot(MegaDataSet(:,end),MegaDataSet(:,1),'LineWidth',0.4,'Color',[0 0.5 0.5])      % complete the plot command here 
+% plot time series divider WIP
+TimeSeriesDivider = plot(MegaDataSet.RelevantDates,MegaDataSet.SpecialDivider,'LineWidth',0.4,'Color',[0 0.5 0.5])
 datetick('x','yyyy')
 axis([MegaDataSet(1,1) MegaDataSet(end,1) 0 max(MegaDataset(:,end)])
 title('Time Series Divider')
@@ -284,7 +284,7 @@ CompanyData(:,1) = CompanyDate
 
 
 
-MSFT = F_Alphavantage('TIME_SERIES_DAILY','symbol','MSFT','outputsize','full') 
+GM = F_Alphavantage('TIME_SERIES_DAILY','symbol','GM','outputsize','full') 
 MSFTDate = MSFT.Date
 MSFTClosingPrice = MSFT.Close
 MSFTData = table(MSFTDate,MSFTClosingPrice);

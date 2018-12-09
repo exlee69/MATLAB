@@ -131,7 +131,7 @@ compiledv2 = regexprep(compiledv2,'Honeywell International','Honeywell Internati
 compiledv2 = regexprep(compiledv2,'Honeywell International Inc Inc','Honeywell International Inc');
 compiledv2 = regexprep(compiledv2,'Intel Corporation','Intel Corp');
 compiledv2 = regexprep(compiledv2,'International Business Machines Corp','International Business Machines');
-compiledv2 = regexprep(compiledv2,'Kraft Foods Inc','Kraft Heinz Co');
+compiledv2 = regexprep(compiledv2,'Kraft Foods Inc','Mondelez Intl Cmn A');
 compiledv2 = regexprep(compiledv2,'Nike, Inc','Nike Inc');
 compiledv2 = regexprep(compiledv2,'JPMorgan Chase & Co','JP Morgan Chase & Co');
 compiledv2 = regexprep(compiledv2,'SBC Communications Inc','AT&T Inc');
@@ -178,6 +178,10 @@ n = SizeOfCompiledData(1,1);
 m = SizeOfCompiledData(1,2);
 CompanyData = zeros(1,31);
 
+
+GM = readtable('General motors stock prices.xlsx');
+
+
 for c= 1:n
     StartDateCompany = char(compiledv3(c,1));
     EndDateCompany = char(compiledv3(c,2));
@@ -201,6 +205,9 @@ end
 CompanyData(:,1) = []
 CompanyData(1,:) = []
 
+
+
+
 % check
 h = [0]
 for c= 1:11
@@ -220,13 +227,13 @@ writetable(h1,"Check1.xls",'Sheet',1,'Range','A1')
 % test WIP
 % compute sum of companies, and include the Dates, DJIAClosingPrice into
 % one big mega dataset
-MegaDataSet = array2table(CompanyData)
-RelevantDates = table(RelevantDates)
-DJIAClosingPrice = table(DJIAClosingPrice)
-SumOfCompanyPrices = sum(CompanyData,2)
-SumOfCompanyPrices = array2table(SumOfCompanyPrices)
-MegaDataSet = [RelevantDates,MegaDataSet,SumOfCompanyPrices,DJIAClosingPrice]
-MegaDataSet.SpecialDivider = (MegaDataSet.SumOfCompanyPrices)./(MegaDataSet.DJIAClosingPrice)
+MegaDataSet = array2table(CompanyData);
+RelevantDates = table(RelevantDates);
+DJIAClosingPrice = table(DJIAClosingPrice);
+SumOfCompanyPrices = sum(CompanyData,2);
+SumOfCompanyPrices = array2table(SumOfCompanyPrices);
+MegaDataSet = [RelevantDates,MegaDataSet,SumOfCompanyPrices,DJIAClosingPrice];
+MegaDataSet.SpecialDivider = (MegaDataSet.SumOfCompanyPrices)./(MegaDataSet.DJIAClosingPrice);
 % check
 writetable(MegaDataSet,"Check2.xls",'Sheet',1,'Range','A1')
 
@@ -284,7 +291,7 @@ CompanyData(:,1) = CompanyDate
 
 
 
-MSFT = F_Alphavantage('TIME_SERIES_DAILY','symbol','MSFT','outputsize','full') 
+GM = F_Alphavantage('TIME_SERIES_DAILY','symbol','GM','outputsize','full') 
 MSFTDate = MSFT.Date
 MSFTClosingPrice = MSFT.Close
 MSFTData = table(MSFTDate,MSFTClosingPrice);
