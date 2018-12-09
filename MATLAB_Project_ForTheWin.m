@@ -177,9 +177,9 @@ SizeOfCompiledData = size(compiledv3);
 n = SizeOfCompiledData(1,1);
 m = SizeOfCompiledData(1,2);
 CompanyData = zeros(1,31);
-
-
+% Import GM Data (Dates and Closing Price)
 GM = readtable('General motors stock prices.xlsx');
+GMRelevantDate = GM.CombinedDate
 
 
 for c= 1:n
@@ -193,7 +193,8 @@ for c= 1:n
         CompanyNameStr = char(compiledv3(c,d));
         CompanyDataExtract = hist_stock_data(StartDateCompany,EndDateCompany,CompanyNameStr);
         if isempty(CompanyDataExtract)
-            CompanyClosingPrice = zeros(MiniRelevantDates,1);
+            StartDateIndex = strmatch(StartDateCompany,GMRelevantDate);
+            CompanyClosingPrice = table2array(GM(StartDateIndex:StartDateIndex+MiniRelevantDates-1,2));
             MiniCompanyData = [MiniCompanyData CompanyClosingPrice];
         else
             CompanyClosingPrice = CompanyDataExtract.Close;
@@ -202,8 +203,8 @@ for c= 1:n
     end
     CompanyData = [CompanyData; MiniCompanyData];
 end
-CompanyData(:,1) = []
-CompanyData(1,:) = []
+CompanyData(:,1) = [];
+CompanyData(1,:) = [];
 
 
 
@@ -223,8 +224,6 @@ h1 = array2table(h1)
 xlswrite("Check1.xls",h1,'A1')
 writetable(h1,"Check1.xls",'Sheet',1,'Range','A1')
 
-
-% test WIP
 % compute sum of companies, and include the Dates, DJIAClosingPrice into
 % one big mega dataset
 MegaDataSet = array2table(CompanyData);
