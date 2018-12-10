@@ -221,7 +221,6 @@ end
 h(1,:) = []
 h1 = [h,RelevantDates] 
 h1 = array2table(h1)
-xlswrite("Check1.xls",h1,'A1')
 writetable(h1,"Check1.xls",'Sheet',1,'Range','A1')
 
 % compute sum of companies, and include the Dates, DJIAClosingPrice into
@@ -237,10 +236,14 @@ MegaDataSet.SpecialDivider = (MegaDataSet.SumOfCompanyPrices)./(MegaDataSet.DJIA
 writetable(MegaDataSet,"Check2.xls",'Sheet',1,'Range','A1')
 
 
+
 % plot time series divider WIP
-TimeSeriesDivider = plot(MegaDataSet.RelevantDates,MegaDataSet.SpecialDivider,'LineWidth',0.4,'Color',[0 0.5 0.5])
+x = datetime(MegaDataSet{:,1})
+y = MegaDataSet{:,34}
+TimeSeriesDivider = plot(x,y,'LineWidth',0.4,'Color',[0 0.5 0.5])
 datetick('x','yyyy')
-axis([MegaDataSet(1,1) MegaDataSet(end,1) 0 max(MegaDataset(:,end)])
+xlabel('Time')
+ylabel('Special Divider')
 title('Time Series Divider')
 
 
