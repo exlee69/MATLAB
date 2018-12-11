@@ -1,7 +1,8 @@
 % set working directory
 
 % set parameter
-
+StartDate = '08042004'; %yahoofinance is fixed at this date
+EndDate = datestr(now,'ddmmyyyy');
 
 %% extract DJIA components from 2004 onwards
 WebsiteOfHistoricalComponents = 'https://en.wikipedia.org/wiki/Historical_components_of_the_Dow_Jones_Industrial_Average';
@@ -35,15 +36,13 @@ TickerUniverse = Ticker(NYSE,NASDAQ);
 
 %% Creation of Mega Dataset for dates, closing prices of DJIA components, DJIA index, and Special Divisor
 % relevant data inputs for the model
-StartDate = '08042004'; %yahoofinance is fixed at this date
-EndDate = datestr(now,'ddmmyyyy');
 
 % Download time series of DJIA index value from YahooFinance
 DJIAdata = hist_stock_data(StartDate,EndDate,'^DJI');
 RelevantDates = DJIAdata.Date;
 DJIAClosingPrice = DJIAdata.Close;
 % Download time series of relevant companies from YahooFinance
-SizeOfCompiledData = size(compiledtickers);
+SizeOfCompiledData = size(CompiledTickers);
 n = SizeOfCompiledData(1,1);
 m = SizeOfCompiledData(1,2);
 CompanyData = zeros(1,31);
@@ -53,14 +52,14 @@ GMRelevantDate = GM.CombinedDate
 
 
 for c= 1:n
-    StartDateCompany = char(compiledtickers(c,1));
-    EndDateCompany = char(compiledtickers(c,2));
+    StartDateCompany = char(CompiledTickers(c,1));
+    EndDateCompany = char(CompiledTickers(c,2));
     GetDates = hist_stock_data(StartDateCompany,EndDateCompany,'^DJI');
     MiniRelevantDates = GetDates.Date;
     MiniRelevantDates = length(MiniRelevantDates);
     MiniCompanyData = zeros(MiniRelevantDates,1);
     for d = 3:m
-        CompanyNameStr = char(compiledtickers(c,d));
+        CompanyNameStr = char(CompiledTickers(c,d));
         CompanyDataExtract = hist_stock_data(StartDateCompany,EndDateCompany,CompanyNameStr);
         if isempty(CompanyDataExtract)
             StartDateIndex = strmatch(StartDateCompany,GMRelevantDate);
@@ -76,23 +75,6 @@ end
 CompanyData(:,1) = [];
 CompanyData(1,:) = [];
 
-
-
-
-% check
-h = [0]
-for c= 1:11
-    StartDateCompany = char(compiledtickers(c,1));
-    EndDateCompany = char(compiledtickers(c,2));
-    GetDates = hist_stock_data(StartDateCompany,EndDateCompany,'^DJI');
-    MiniRelevantDates = GetDates.Date;
-    h = [h;MiniRelevantDates];
-end
-h(1,:) = []
-h1 = [h,RelevantDates] 
-h1 = array2table(h1)
-writetable(h1,"Check1.xls",'Sheet',1,'Range','A1')
-
 % compute sum of companies, and include the Dates, DJIAClosingPrice into
 % one big mega dataset
 MegaDataSet = array2table(CompanyData);
@@ -102,8 +84,6 @@ SumOfCompanyPrices = sum(CompanyData,2);
 SumOfCompanyPrices = array2table(SumOfCompanyPrices);
 MegaDataSet = [RelevantDates,MegaDataSet,SumOfCompanyPrices,DJIAClosingPrice];
 MegaDataSet.SpecialDivider = (MegaDataSet.SumOfCompanyPrices)./(MegaDataSet.DJIAClosingPrice);
-% check
-writetable(MegaDataSet,"Check2.xls",'Sheet',1,'Range','A1')
 
 
 

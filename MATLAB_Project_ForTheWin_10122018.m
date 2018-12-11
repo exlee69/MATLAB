@@ -50,6 +50,7 @@ filteredData = filteredData(~cellfun('isempty', filteredData));
 companies = reshape(filteredData,30,[]);
 companies = companies.';
 % remove unwanted symbols
+% make this more flexible please
 companies = pad(companies,40,'right');
 companies = regexprep(companies,'\s\W\s{5,29}','');
 companies = strtrim(companies);
