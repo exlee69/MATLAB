@@ -1,5 +1,5 @@
-% set working directory
-out = MLStartDir('/Users/leeeexuan/Desktop/ST GALLEN MATLAB/Project/MATLAB')
+% set working directory. To customise according to your file!
+userpath('/Users/leeeexuan/Desktop/ST GALLEN MATLAB/Project/MATLAB/Final File')
 % set parameter
 StartDate = '21112005'; %yahoofinance is fixed at this date
 EndDate = datestr(now,'ddmmyyyy');
