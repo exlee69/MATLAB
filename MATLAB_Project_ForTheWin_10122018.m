@@ -8,7 +8,7 @@
 % extract DJIA components from 1998 onwards (due to alphavantage)
 WebsiteOfHistoricalComponents = 'https://en.wikipedia.org/wiki/Historical_components_of_the_Dow_Jones_Industrial_Average';
 fullList = webread(WebsiteOfHistoricalComponents);
-fullList = extractBefore(fullList,'<p>AT&amp;T, Eastman Kodak, and International Paper were replaced by American International, Pfizer, and Verizon.');
+fullList = extractBefore(fullList,'<p>SBC Communications Inc. was renamed AT&amp;T Inc.');
 % obtain list of companies which are/ used to be a DJIA component
 % cleaning data
 % extract DJIA historical components
@@ -89,9 +89,9 @@ date_prev = datetime(combined_date)
 date_prev = dateshift(date_prev,'end','day','previous')
 date_prev = datestr(date_prev,'ddmmyyyy')
 date_prev = cellstr(date_prev)
-date_prev(2:12,1) = date_prev(1:11,1)
+date_prev(2:11,1) = date_prev(1:10,1)
 date_prev{1,1} = datestr(datetime('today'),'ddmmyyyy')
-date_prev(12,:) = []
+date_prev(11,:) = []
 
 
 % Compile dates and companies into one sheet
@@ -153,8 +153,7 @@ compiled = regexprep(compiled,'Wal-Mart Stores, Inc','Wal-Mart Stores');
 compiled = regexprep(compiled,'Walmart Inc','Wal-Mart Stores');
 compiled = regexprep(compiled,'Walgreens Boots Alliance, Inc','Walgreens Boots Alliance');
 % MacDonalds
-compiled(1,5) = compiled(5,5);
-compiled(2:4,8) = compiled(5,5);
+compiled(1:3,8) = compiled(4,5);
 
 % convert companies in compiled dataset to its tickers
 m = size(compiled);

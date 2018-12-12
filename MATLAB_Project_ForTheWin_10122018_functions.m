@@ -1,13 +1,13 @@
 % set working directory
 
 % set parameter
-StartDate = '08042004'; %yahoofinance is fixed at this date
+StartDate = '21112005'; %yahoofinance is fixed at this date
 EndDate = datestr(now,'ddmmyyyy');
 
 %% extract DJIA components from 2004 onwards
 WebsiteOfHistoricalComponents = 'https://en.wikipedia.org/wiki/Historical_components_of_the_Dow_Jones_Industrial_Average';
 fullList = webread(WebsiteOfHistoricalComponents);
-fullList = extractBefore(fullList,'<p>AT&amp;T, Eastman Kodak, and International Paper were replaced by American International, Pfizer, and Verizon.');
+fullList = extractBefore(fullList,'<p>SBC Communications Inc. was renamed AT&amp;T Inc');
 
 %% obtain list of companies which are/ used to be a DJIA component
 
@@ -32,7 +32,6 @@ TickerUniverse = Ticker(NYSE,NASDAQ);
 
 %% standardise company names to TickerUniverse & convert companies in compiled dataset to its tickers
 [StandardisedCompanyName,CompiledTickers] = TickerConversion(compiled, TickerUniverse);
-
 
 %% Creation of Mega Dataset for dates, closing prices of DJIA components, DJIA index, and Special Divisor
 % relevant data inputs for the model

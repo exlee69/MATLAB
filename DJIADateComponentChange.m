@@ -32,7 +32,7 @@ DatePrevious = datetime(combined_date)
 DatePrevious = dateshift(DatePrevious,'end','day','previous')
 DatePrevious = datestr(DatePrevious,'ddmmyyyy')
 DatePrevious = cellstr(DatePrevious)
-DatePrevious(2:12,1) = DatePrevious(1:11,1)
+DatePrevious(2:11,1) = DatePrevious(1:10,1)
 DatePrevious{1,1} = datestr(datetime('today'),'ddmmyyyy')
-DatePrevious(12,:) = []
+DatePrevious(11,:) = []
 end

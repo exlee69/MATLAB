@@ -34,8 +34,7 @@ StandardisedCompanyName = regexprep(StandardisedCompanyName,'Wal-Mart Stores, In
 StandardisedCompanyName = regexprep(StandardisedCompanyName,'Walmart Inc','Wal-Mart Stores');
 StandardisedCompanyName = regexprep(StandardisedCompanyName,'Walgreens Boots Alliance, Inc','Walgreens Boots Alliance');
 % MacDonalds
-StandardisedCompanyName(1,5) = StandardisedCompanyName(5,5);
-StandardisedCompanyName(2:4,8) = StandardisedCompanyName(5,5);
+StandardisedCompanyName(1:3,8) = StandardisedCompanyName(4,5);
 % convert companies in compiled dataset to its tickers
 m = size(StandardisedCompanyName);
 n = length(StandardisedCompanyName);
